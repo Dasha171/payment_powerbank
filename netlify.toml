@@ -1,0 +1,10 @@
+# Netlify configuration for Apple Pay domain verification
+[[redirects]]
+  from = "/.well-known/*"
+  to = "/.well-known/:splat"
+  status = 200
+
+[[headers]]
+  for = "/.well-known/apple-developer-merchantid-domain-association"
+  [headers.values]
+  Content-Type = "application/octet-stream"

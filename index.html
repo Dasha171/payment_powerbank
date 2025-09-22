@@ -14,6 +14,14 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png"/>
     
+    <!-- Braintree JS SDK -->
+    <script src="https://js.braintreegateway.com/web/3.129.1/js/client.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.129.1/js/dropin.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.129.1/js/apple-pay.min.js"></script>
+    
+    <!-- Our bridge -->
+    <script src="assets/js/braintree_bridge.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -163,11 +171,6 @@
             cursor: not-allowed;
         }
 
-        .apple-logo {
-            font-size: 20px;
-            margin-right: 8px;
-        }
-
         .ios-icon {
             width: 20px;
             height: 20px;
@@ -302,245 +305,6 @@
             font-size: 16px;
         }
 
-        /* Apple Pay Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            align-items: flex-end;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal {
-            background: white;
-            border-radius: 20px 20px 0 0;
-            width: 100%;
-            max-width: 400px;
-            max-height: 70vh;
-            animation: slideUp 0.3s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-            }
-            to {
-                transform: translateY(0);
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 20px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .modal-title {
-            display: flex;
-            align-items: center;
-            font-size: 18px;
-            font-weight: 600;
-            color: #000;
-        }
-
-        .modal-ios-icon {
-            width: 20px;
-            height: 20px;
-            background: #000;
-            border-radius: 3px;
-            margin-right: 8px;
-            position: relative;
-        }
-
-        .modal-ios-icon::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            right: 2px;
-            bottom: 2px;
-            background: white;
-            border-radius: 1px;
-        }
-
-        .modal-ios-icon::after {
-            content: '';
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            right: 4px;
-            bottom: 4px;
-            background: #000;
-            border-radius: 1px;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 20px;
-            color: #666;
-            cursor: pointer;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            padding: 20px;
-        }
-
-        .payment-method-block {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .apple-card-icon {
-            width: 40px;
-            height: 25px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 6px;
-            margin-right: 12px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .apple-card-icon::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            right: 2px;
-            bottom: 2px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 3px;
-        }
-
-        .apple-card-icon::after {
-            content: '••••';
-            color: white;
-            font-size: 10px;
-            font-weight: bold;
-            position: relative;
-            z-index: 1;
-        }
-
-        .card-details {
-            flex: 1;
-        }
-
-        .card-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: #000;
-            margin-bottom: 2px;
-        }
-
-        .card-address {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 2px;
-        }
-
-        .card-number {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .payment-arrow {
-            color: #999;
-            font-size: 18px;
-        }
-
-        .amount-block {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .amount-text {
-            font-size: 24px;
-            font-weight: bold;
-            color: #000;
-        }
-
-        .account-block {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-
-        .account-text {
-            font-size: 16px;
-            color: #000;
-        }
-
-        .confirm-section {
-            text-align: center;
-        }
-
-        .confirm-icon {
-            width: 60px;
-            height: 60px;
-            background: #007AFF;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .confirm-icon:active {
-            transform: scale(0.95);
-        }
-
-        .confirm-icon::before {
-            content: '';
-            width: 20px;
-            height: 20px;
-            border: 2px solid white;
-            border-top: none;
-            border-right: none;
-            transform: rotate(-45deg);
-        }
-
-        .confirm-text {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .side-button-indicator {
-            width: 100%;
-            height: 4px;
-            background: #007AFF;
-            border-radius: 2px;
-            margin-bottom: 8px;
-        }
-
         /* Mobile optimizations */
         @media (max-width: 480px) {
             .container {
@@ -590,10 +354,6 @@
                 background: #111;
                 border-color: #333;
             }
-            
-            .modal {
-                background: #000;
-            }
         }
     </style>
 </head>
@@ -633,7 +393,7 @@
                 </button>
 
                 <div class="card-payment" onclick="processCardPayment()">
-                    <span class="card-icon">💳</span>
+                    <span class="card-icon"></span>
                     <span class="card-text">Debit or credit card</span>
                     <span class="chevron">›</span>
                 </div>
@@ -649,44 +409,6 @@
         <!-- Support Link -->
         <div class="support-link" onclick="contactSupport()">
             Nothing happened? Contact support
-        </div>
-    </div>
-
-    <!-- Apple Pay Modal -->
-    <div class="modal-overlay" id="applePayModal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">
-                    <span class="modal-ios-icon"></span>
-                    Pay
-                </div>
-                <button class="modal-close" onclick="closeApplePayModal()">×</button>
-            </div>
-            <div class="modal-content">
-                <div class="payment-method-block">
-                    <div class="apple-card-icon"></div>
-                    <div class="card-details">
-                        <div class="card-name">Apple Card</div>
-                        <div class="card-address">10880 Malibu Point Malibu Cal...</div>
-                        <div class="card-number">.... 1234</div>
-                    </div>
-                    <span class="payment-arrow">›</span>
-                </div>
-                
-                <div class="amount-block">
-                    <div class="amount-text">$4.99</div>
-                </div>
-                
-                <div class="account-block">
-                    <div class="account-text">Account: username@icloud.com</div>
-                </div>
-                
-                <div class="confirm-section">
-                    <div class="side-button-indicator"></div>
-                    <div class="confirm-text">Double Click to Pay</div>
-                    <div class="confirm-icon" onclick="confirmPayment()"></div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -873,59 +595,11 @@
             document.getElementById('loading').style.display = 'none';
         }
 
-        function showApplePayModal() {
-            document.getElementById('applePayModal').style.display = 'flex';
-        }
-
-        function closeApplePayModal() {
-            document.getElementById('applePayModal').style.display = 'none';
-        }
-
-        function confirmPayment() {
-            closeApplePayModal();
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                showSuccessModal();
-            }, 1500);
-        }
-
         function showSuccessModal() {
             // Redirect to success page
             const stationId = getStationId();
             window.location.href = `success.html?stationId=${stationId}`;
         }
-
-        function closeSuccessModal() {
-            const modal = document.querySelector('.modal-overlay');
-            if (modal) {
-                modal.remove();
-            }
-        }
-
-        function openApp() {
-            // Try to open mobile app, fallback to App Store
-            const appUrl = 'powerbank://open';
-            const appStoreUrl = 'https://apps.apple.com/app/powerbank';
-            
-            window.location.href = appUrl;
-            
-            // Fallback after 2 seconds
-            setTimeout(() => {
-                window.open(appStoreUrl, '_blank');
-            }, 2000);
-        }
-
-        // Close modal when clicking outside
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('modal-overlay')) {
-                if (e.target.id === 'applePayModal') {
-                    closeApplePayModal();
-                } else {
-                    closeSuccessModal();
-                }
-            }
-        });
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
@@ -934,10 +608,8 @@
 
         // Handle back button
         window.addEventListener('popstate', function() {
-            closeSuccessModal();
+            // Handle back navigation if needed
         });
     </script>
 </body>
 </html>
-< ! - -   U p d a t e d   0 9 / 2 2 / 2 0 2 5   1 7 : 4 5 : 2 4   - - >  
- 

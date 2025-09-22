@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Bank Rental - Design Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #000;
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .price-section {
+            margin-bottom: 30px;
+        }
+
+        .subscription-label {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: end;
+            margin-bottom: 8px;
+        }
+
+        .current-price {
+            font-size: 36px;
+            font-weight: bold;
+            color: #000;
+            margin-right: 12px;
+        }
+
+        .old-price {
+            font-size: 18px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .discount-text {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .station-info {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .location-icon {
+            color: #007AFF;
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
+        .station-details h3 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .station-details p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .payment-section {
+            margin-bottom: 20px;
+        }
+
+        .apple-pay-btn {
+            width: 100%;
+            height: 52px;
+            background: #000;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .apple-pay-btn:hover {
+            background: #333;
+        }
+
+        .apple-pay-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .apple-logo {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+
+        .card-payment {
+            width: 100%;
+            height: 56px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .card-payment:hover {
+            border-color: #999;
+        }
+
+        .card-icon {
+            font-size: 24px;
+            margin-right: 12px;
+            color: #333;
+        }
+
+        .card-text {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .chevron {
+            color: #999;
+            font-size: 20px;
+        }
+
+        .support-link {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #999;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Success Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            max-width: 400px;
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-height: 45vh;
+        }
+
+        .modal-handle {
+            width: 40px;
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+            margin: 12px auto;
+        }
+
+        .modal-content {
+            padding: 24px;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: white;
+            font-size: 40px;
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .station-id {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 32px;
+        }
+
+        .confirm-btn {
+            width: 100%;
+            height: 52px;
+            background: #000;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 16px;
+        }
+
+        .app-link {
+            background: none;
+            border: none;
+            color: #007AFF;
+            font-size: 16px;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <button class="close-btn" onclick="closeApp()">×</button>
+            <h1 class="title">Power Bank Rental</h1>
+            <div></div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Price Section -->
+            <div class="price-section">
+                <div class="subscription-label">Monthly Subscription</div>
+                <div class="price-row">
+                    <span class="current-price">$4.99</span>
+                    <span class="old-price">$9.99</span>
+                </div>
+                <div class="discount-text">First month only</div>
+            </div>
+
+            <!-- Station Info -->
+            <div class="station-info">
+                <span class="location-icon">📍</span>
+                <div class="station-details">
+                    <h3>Station: RECH082203000350</h3>
+                    <p>Test Station Location</p>
+                </div>
+            </div>
+
+            <!-- Payment Section -->
+            <div class="payment-section">
+                <button class="apple-pay-btn" onclick="processApplePay()">
+                    <span class="apple-logo">🍎</span>
+                    Apple Pay
+                </button>
+
+                <div class="card-payment" onclick="processCardPayment()">
+                    <span class="card-icon">💳</span>
+                    <span class="card-text">Debit or credit card</span>
+                    <span class="chevron">›</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">Processing payment...</div>
+        </div>
+
+        <!-- Support Link -->
+        <div class="support-link" onclick="contactSupport()">
+            Nothing happened? Contact support
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="modal-handle"></div>
+            <div class="modal-content">
+                <div class="success-icon">✓</div>
+                <h2 class="success-title">Power Bank Issued!</h2>
+                <p class="station-id">Station: RECH082203000350</p>
+                <button class="confirm-btn" onclick="closeSuccessModal()">Done</button>
+                <button class="app-link" onclick="openApp()">Open App</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function closeApp() {
+            alert('Close app functionality');
+        }
+
+        function processApplePay() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                showSuccessModal();
+            }, 2000);
+        }
+
+        function processCardPayment() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                showSuccessModal();
+            }, 2000);
+        }
+
+        function contactSupport() {
+            alert('Contact support functionality');
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showSuccessModal() {
+            document.getElementById('successModal').style.display = 'flex';
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+
+        function openApp() {
+            alert('Open app functionality');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSuccessModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -724,28 +724,141 @@
             // Запускаем настоящий Apple Pay
             showLoading();
             
-            // Получаем client token (в реальном приложении это будет API запрос)
-            const clientToken = 'sandbox_client_token'; // Заменить на реальный токен
+            // Получаем client token через API
+            try {
+                const response = await fetch('/api/v1/payments/generate-and-save-braintree-client-token');
+                const data = await response.json();
+                const clientToken = data.clientToken;
             
-            window.startApplePay(clientToken, '4.99')
-                .then(nonce => {
-                    hideLoading();
-                    // В реальном приложении здесь будет отправка nonce на backend
-                    console.log('Apple Pay nonce:', nonce);
-                    showSuccessModal();
-                })
-                .catch(error => {
-                    hideLoading();
-                    alert('Apple Pay failed: ' + error.message);
-                });
+                window.startApplePay(clientToken, '4.99')
+                    .then(async nonce => {
+                        // Создаем Apple аккаунт
+                        const accountResponse = await fetch('/api/v1/auth/apple/generate-account', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ deviceId: 'web_' + Date.now() })
+                        });
+                        const accountData = await accountResponse.json();
+                        
+                        // Добавляем payment method
+                        const paymentResponse = await fetch('/api/v1/payments/add-payment-method', {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + accountData.accountId
+                            },
+                            body: JSON.stringify({
+                                paymentNonceFromTheClient: nonce,
+                                description: 'web',
+                                paymentType: 'apple'
+                            })
+                        });
+                        const paymentData = await paymentResponse.json();
+                        
+                        // Создаем подписку
+                        const subscriptionResponse = await fetch('/api/v1/payments/subscription/create-subscription-transaction-v2?disableWelcomeDiscount=false&welcomeDiscount=10', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                paymentToken: paymentData.paymentToken,
+                                thePlanId: 'tss2'
+                            })
+                        });
+                        
+                        // Арендуем павербанк
+                        const rentalResponse = await fetch('/api/v1/payments/rent-power-bank', {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + accountData.accountId
+                            },
+                            body: JSON.stringify({
+                                stationId: getStationId(),
+                                paymentToken: paymentData.paymentToken
+                            })
+                        });
+                        
+                        hideLoading();
+                        showSuccessModal();
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        alert('Apple Pay failed: ' + error.message);
+                    });
+            } catch (error) {
+                hideLoading();
+                alert('Failed to get client token: ' + error.message);
+            }
         }
 
-        function processCardPayment() {
+        async function processCardPayment() {
             showLoading();
-            setTimeout(() => {
+            
+            try {
+                // Получаем client token
+                const response = await fetch('/api/v1/payments/generate-and-save-braintree-client-token');
+                const data = await response.json();
+                const clientToken = data.clientToken;
+                
+                // Инициализируем Drop-in
+                await window.initDropIn(clientToken);
+                
+                // Запрашиваем payment method
+                const nonce = await window.requestPaymentMethod();
+                
+                // Создаем Apple аккаунт
+                const accountResponse = await fetch('/api/v1/auth/apple/generate-account', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ deviceId: 'web_' + Date.now() })
+                });
+                const accountData = await accountResponse.json();
+                
+                // Добавляем payment method
+                const paymentResponse = await fetch('/api/v1/payments/add-payment-method', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + accountData.accountId
+                    },
+                    body: JSON.stringify({
+                        paymentNonceFromTheClient: nonce,
+                        description: 'web',
+                        paymentType: 'card'
+                    })
+                });
+                const paymentData = await paymentResponse.json();
+                
+                // Создаем подписку
+                const subscriptionResponse = await fetch('/api/v1/payments/subscription/create-subscription-transaction-v2?disableWelcomeDiscount=false&welcomeDiscount=10', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        paymentToken: paymentData.paymentToken,
+                        thePlanId: 'tss2'
+                    })
+                });
+                
+                // Арендуем павербанк
+                const rentalResponse = await fetch('/api/v1/payments/rent-power-bank', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + accountData.accountId
+                    },
+                    body: JSON.stringify({
+                        stationId: getStationId(),
+                        paymentToken: paymentData.paymentToken
+                    })
+                });
+                
                 hideLoading();
                 showSuccessModal();
-            }, 2000);
+                
+            } catch (error) {
+                hideLoading();
+                alert('Card payment failed: ' + error.message);
+            }
         }
 
         function contactSupport() {

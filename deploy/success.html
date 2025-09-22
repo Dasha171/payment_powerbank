@@ -186,8 +186,61 @@
             }, 2000);
         }
 
-        function contactSupport() {
-            window.open('mailto:support@powerbank.com?subject=Power Bank Support', '_blank');
+        async function contactSupport() {
+            const email = 'support@powerbank.com';
+            const subject = 'Power Bank Support';
+            const stationId = getStationId();
+            const body = `Hello,\n\nI need help with Power Bank rental.\n\nStation ID: ${stationId}\nIssue: `;
+            
+            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            // Пробуем несколько способов
+            let success = false;
+            
+            // Способ 1: window.location.href
+            try {
+                window.location.href = mailtoLink;
+                success = true;
+            } catch (error) {
+                console.log('Method 1 failed:', error);
+            }
+            
+            // Способ 2: window.open
+            if (!success) {
+                try {
+                    window.open(mailtoLink, '_blank');
+                    success = true;
+                } catch (error) {
+                    console.log('Method 2 failed:', error);
+                }
+            }
+            
+            // Способ 3: Создание временной ссылки
+            if (!success) {
+                try {
+                    const link = document.createElement('a');
+                    link.href = mailtoLink;
+                    link.target = '_blank';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    success = true;
+                } catch (error) {
+                    console.log('Method 3 failed:', error);
+                }
+            }
+            
+            // Способ 4: Копирование в буфер обмена + alert
+            if (!success) {
+                try {
+                    const textToCopy = `${email}\n\nSubject: ${subject}\nStation ID: ${stationId}`;
+                    await navigator.clipboard.writeText(textToCopy);
+                    alert(`Email copied to clipboard!\n\n${textToCopy}\n\nPlease paste it in your email app.`);
+                } catch (error) {
+                    // Последний fallback
+                    alert(`Please contact us at: ${email}\n\nSubject: ${subject}\nStation ID: ${stationId}\n\nCopy this information manually.`);
+                }
+            }
         }
 
         // Get station ID from URL for analytics

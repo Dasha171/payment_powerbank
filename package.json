@@ -1,0 +1,25 @@
+{
+  "name": "payment_power",
+  "version": "1.0.0",
+  "description": "- `index.html` - Главная страница приложения\r - `README.md` - Инструкции по деплою",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dasha171/payment_powerbank.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Dasha171/payment_powerbank/issues"
+  },
+  "homepage": "https://github.com/Dasha171/payment_powerbank#readme"
+}

@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Bank Rental</title>
+    <meta name="description" content="Quick and easy power bank rental service">
+
+    <!-- PWA Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Power Bank Rental">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #000;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .price-section {
+            margin-bottom: 30px;
+        }
+
+        .subscription-label {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: end;
+            margin-bottom: 8px;
+        }
+
+        .current-price {
+            font-size: 36px;
+            font-weight: bold;
+            color: #000;
+            margin-right: 12px;
+        }
+
+        .old-price {
+            font-size: 18px;
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .discount-text {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .station-info {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .location-icon {
+            color: #007AFF;
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
+        .station-details h3 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .station-details p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .payment-section {
+            margin-bottom: 20px;
+        }
+
+        .apple-pay-btn {
+            width: 100%;
+            height: 52px;
+            background: #000;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            position: relative;
+        }
+
+        .apple-pay-btn:hover {
+            background: #333;
+        }
+
+        .apple-pay-btn:active {
+            transform: scale(0.98);
+        }
+
+        .apple-pay-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .apple-logo {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+
+        .ios-icon {
+            width: 20px;
+            height: 20px;
+            background: #000;
+            border-radius: 3px;
+            margin-right: 8px;
+            position: relative;
+        }
+
+        .ios-icon::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: white;
+            border-radius: 1px;
+        }
+
+        .ios-icon::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            background: #000;
+            border-radius: 1px;
+        }
+
+        .ios-icon {
+            width: 20px;
+            height: 20px;
+            background: #000;
+            border-radius: 3px;
+            margin-right: 8px;
+            position: relative;
+        }
+
+        .ios-icon::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: white;
+            border-radius: 1px;
+        }
+
+        .ios-icon::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            background: #000;
+            border-radius: 1px;
+        }
+
+        .card-payment {
+            width: 100%;
+            height: 56px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+
+        .card-payment:hover {
+            border-color: #999;
+        }
+
+        .card-payment:active {
+            transform: scale(0.98);
+            background: #f8f9fa;
+        }
+
+        .card-icon {
+            width: 32px;
+            height: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            margin-right: 12px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        .card-icon::after {
+            content: '••••';
+            color: white;
+            font-size: 8px;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-text {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .chevron {
+            color: #999;
+            font-size: 20px;
+        }
+
+        .support-link {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #999;
+            text-decoration: underline;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Apple Pay Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            max-width: 400px;
+            max-height: 70vh;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .modal-title {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .modal-ios-icon {
+            width: 20px;
+            height: 20px;
+            background: #000;
+            border-radius: 3px;
+            margin-right: 8px;
+            position: relative;
+        }
+
+        .modal-ios-icon::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: white;
+            border-radius: 1px;
+        }
+
+        .modal-ios-icon::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            background: #000;
+            border-radius: 1px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #666;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            padding: 20px;
+        }
+
+        .payment-method-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .apple-card-icon {
+            width: 40px;
+            height: 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 6px;
+            margin-right: 12px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .apple-card-icon::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .apple-card-icon::after {
+            content: '••••';
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-details {
+            flex: 1;
+        }
+
+        .card-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 2px;
+        }
+
+        .card-address {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 2px;
+        }
+
+        .card-number {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .payment-arrow {
+            color: #999;
+            font-size: 18px;
+        }
+
+        .amount-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .amount-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .account-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .account-text {
+            font-size: 16px;
+            color: #000;
+        }
+
+        .confirm-section {
+            text-align: center;
+        }
+
+        .confirm-icon {
+            width: 60px;
+            height: 60px;
+            background: #007AFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .confirm-icon:active {
+            transform: scale(0.95);
+        }
+
+        .confirm-icon::before {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-top: none;
+            border-right: none;
+            transform: rotate(-45deg);
+        }
+
+        .confirm-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .side-button-indicator {
+            width: 100%;
+            height: 4px;
+            background: #007AFF;
+            border-radius: 2px;
+            margin-bottom: 8px;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 16px;
+            }
+            
+            .content {
+                padding: 16px;
+            }
+            
+            .current-price {
+                font-size: 32px;
+            }
+            
+            .apple-pay-btn, .confirm-btn {
+                height: 48px;
+                font-size: 16px;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #000;
+                color: #fff;
+            }
+            
+            .container {
+                background: #000;
+            }
+            
+            .header {
+                background: #000;
+                border-bottom-color: #333;
+            }
+            
+            .station-info {
+                background: #111;
+                border-color: #333;
+            }
+            
+            .card-payment {
+                background: #111;
+                border-color: #333;
+            }
+            
+            .modal {
+                background: #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <button class="close-btn" onclick="closeApp()">×</button>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Price Section -->
+            <div class="price-section">
+                <div class="subscription-label">Monthly Subscription</div>
+                <div class="price-row">
+                    <span class="current-price">$4.99</span>
+                    <span class="old-price">$9.99</span>
+                </div>
+                <div class="discount-text">First month only</div>
+            </div>
+
+            <!-- Station Info -->
+            <div class="station-info">
+                <span class="location-icon">📍</span>
+                <div class="station-details">
+                    <h3>Station: RECH082203000350</h3>
+                    <p>Test Station Location</p>
+                </div>
+            </div>
+
+            <!-- Payment Section -->
+            <div class="payment-section">
+                <button class="apple-pay-btn" onclick="processApplePay()">
+                    <span class="ios-icon"></span>
+                    Apple Pay
+                </button>
+
+                <div class="card-payment" onclick="processCardPayment()">
+                    <span class="card-icon">💳</span>
+                    <span class="card-text">Debit or credit card</span>
+                    <span class="chevron">›</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">Processing payment...</div>
+        </div>
+
+        <!-- Support Link -->
+        <div class="support-link" onclick="contactSupport()">
+            Nothing happened? Contact support
+        </div>
+    </div>
+
+    <!-- Apple Pay Modal -->
+    <div class="modal-overlay" id="applePayModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span class="modal-ios-icon"></span>
+                    Pay
+                </div>
+                <button class="modal-close" onclick="closeApplePayModal()">×</button>
+            </div>
+            <div class="modal-content">
+                <div class="payment-method-block">
+                    <div class="apple-card-icon"></div>
+                    <div class="card-details">
+                        <div class="card-name">Apple Card</div>
+                        <div class="card-address">10880 Malibu Point Malibu Cal...</div>
+                        <div class="card-number">.... 1234</div>
+                    </div>
+                    <span class="payment-arrow">›</span>
+                </div>
+                
+                <div class="amount-block">
+                    <div class="amount-text">$4.99</div>
+                </div>
+                
+                <div class="account-block">
+                    <div class="account-text">Account: username@icloud.com</div>
+                </div>
+                
+                <div class="confirm-section">
+                    <div class="side-button-indicator"></div>
+                    <div class="confirm-text">Double Click to Pay</div>
+                    <div class="confirm-icon" onclick="confirmPayment()"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get station ID from URL
+        function getStationId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('stationId') || 'RECH082203000350';
+        }
+
+        // Update station info
+        function updateStationInfo() {
+            const stationId = getStationId();
+            const stationElement = document.querySelector('.station-details h3');
+            if (stationElement) {
+                stationElement.textContent = `Station: ${stationId}`;
+            }
+        }
+
+        function closeApp() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.close();
+            }
+        }
+
+        function processApplePay() {
+            // Проверяем доступность Apple Pay
+            if (!window.isApplePayAvailable()) {
+                alert('Apple Pay is not available on this device');
+                return;
+            }
+            
+            // Запускаем настоящий Apple Pay
+            showLoading();
+            
+            // Получаем client token (в реальном приложении это будет API запрос)
+            const clientToken = 'sandbox_client_token'; // Заменить на реальный токен
+            
+            window.startApplePay(clientToken, '4.99')
+                .then(nonce => {
+                    hideLoading();
+                    // В реальном приложении здесь будет отправка nonce на backend
+                    console.log('Apple Pay nonce:', nonce);
+                    showSuccessModal();
+                })
+                .catch(error => {
+                    hideLoading();
+                    alert('Apple Pay failed: ' + error.message);
+                });
+        }
+
+        function processCardPayment() {
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                showSuccessModal();
+            }, 2000);
+        }
+
+        function contactSupport() {
+            window.open('mailto:support@powerbank.com?subject=Power Bank Support', '_blank');
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showApplePayModal() {
+            document.getElementById('applePayModal').style.display = 'flex';
+        }
+
+        function closeApplePayModal() {
+            document.getElementById('applePayModal').style.display = 'none';
+        }
+
+        function confirmPayment() {
+            closeApplePayModal();
+            showLoading();
+            setTimeout(() => {
+                hideLoading();
+                showSuccessModal();
+            }, 1500);
+        }
+
+        function showSuccessModal() {
+            // Redirect to success page
+            const stationId = getStationId();
+            window.location.href = `success.html?stationId=${stationId}`;
+        }
+
+        function closeSuccessModal() {
+            const modal = document.querySelector('.modal-overlay');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function openApp() {
+            // Try to open mobile app, fallback to App Store
+            const appUrl = 'powerbank://open';
+            const appStoreUrl = 'https://apps.apple.com/app/powerbank';
+            
+            window.location.href = appUrl;
+            
+            // Fallback after 2 seconds
+            setTimeout(() => {
+                window.open(appStoreUrl, '_blank');
+            }, 2000);
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal-overlay')) {
+                if (e.target.id === 'applePayModal') {
+                    closeApplePayModal();
+                } else {
+                    closeSuccessModal();
+                }
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStationInfo();
+        });
+
+        // Handle back button
+        window.addEventListener('popstate', function() {
+            closeSuccessModal();
+        });
+    </script>
+</body>
+</html>

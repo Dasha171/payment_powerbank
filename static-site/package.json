@@ -1,0 +1,12 @@
+{
+  "name": "payment-power-static",
+  "version": "1.0.0",
+  "description": "Power Bank Rental Static Site",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Static site - no build needed'"
+  },
+  "keywords": ["powerbank", "rental", "payment"],
+  "author": "Dasha",
+  "license": "MIT"
+}
